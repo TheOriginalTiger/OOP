@@ -13,6 +13,9 @@ class Heap {
         heap[j] = tmp;
     }
 
+    /**
+     * method for printing all data in Heap for Debug purposes
+     */
     public void printHeap() {
         for (int i = 0; i < lastInd; i++) {
             System.out.format("%d ", heap[i]);
@@ -45,12 +48,20 @@ class Heap {
 
     }
 
+    /**
+     * method of the Heap to add another elem to heap.
+     * @param elem
+     */
     public void addToHeap(int elem) {
         heap[lastInd] = elem;
         siftUp(lastInd);
         lastInd += 1;
     }
 
+    /**
+     * method of the Heap for extracting the minimal (the first) elem from heap. Deletes the elem from Heap (!)
+     * @return the minimal element on the heap
+     */
     public int extractMin() {
         int temp = heap[0];
         heap[0] = Integer.MAX_VALUE; // kind of infinity here i guess ....
@@ -63,6 +74,12 @@ class Heap {
 
 class HeapUtils
 {
+    /**
+     * method for sorting array. Creates a heap from array received as arg and sorts it via Heap Sort algo
+     * @param array array to be sorted by heapsort
+     * @return sorted array
+     */
+
     public static int[] heapSort(int[] array)
     {
         Heap h = new Heap(array.length);
