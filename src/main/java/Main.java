@@ -1,7 +1,7 @@
 class Heap {
 
-    int heap[];
-    int lastInd = 0;
+    private int heap[];
+    private int lastInd = 0;
 
     public Heap(int sizeOfHeap) {
         heap = new int[sizeOfHeap];
@@ -51,7 +51,7 @@ class Heap {
         lastInd += 1;
     }
 
-    private int extractMin() {
+    public int extractMin() {
         int temp = heap[0];
         heap[0] = Integer.MAX_VALUE; // kind of infinity here i guess ....
         swap(0, lastInd - 1 );
@@ -59,17 +59,19 @@ class Heap {
         siftDown(0);
         return temp;
     }
+}
 
-    public int[] heapSort(int[] array)
+class HeapUtils
+{
+    public static int[] heapSort(int[] array)
     {
-        for (int i = 0 ; i < array.length; i++) {
-            this.addToHeap(array[i]);
+        Heap h = new Heap(array.length);
+        for(int i =0 ;  i < array.length; i++)
+        {
+            h.addToHeap(array[i]);
         }
-        int lol = 5;
-        for (int i = 0; i <array.length; i++){
-            array[i] = extractMin();
-        }
-
+        for (int i = 0; i < array.length; i++)
+            array[i] = h.extractMin();
         return array;
     }
 }
@@ -79,8 +81,7 @@ public class Main
     public static void main(String[] args)
     {
         int heh[] = {23,17,5,0,20,7,29,2,14,31,0,29,13,13,43,-1,14,0,4,12,55,43};
-        Heap h = new Heap(heh.length);
-        heh = h.heapSort(heh);
+        heh = HeapUtils.heapSort(heh);
         for (int i = 0; i < heh.length; i++){
             System.out.format("%d ", heh[i]);
         }
