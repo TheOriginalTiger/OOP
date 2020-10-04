@@ -7,6 +7,14 @@ import java.io.FileNotFoundException;
 class Searcher
 {
 
+    /**
+     * Method for searching a substring in the file. it opens a Stream to the file and reads data to the buffer which is 2*len(Substring)
+     * after that it searches for substring in buffer and either stops it and return
+     * @param subString the String you will be looking for
+     * @param path path to the file to search in
+     * @return the result is either a non-negative number- index of the first substring occurrence or -1 if there is none
+     * @throws IOException can throw IOException if the standart lib will disagree with you for some reason:P
+     */
     static int search(String subString, String path) throws IOException
     {
         int result = -1 ;
