@@ -118,12 +118,11 @@ public class Main {
     public static void main(String[] args) throws IOException, FileNotFoundException {
         FileInputStream stream = null;
         String ss = "l";//aba
-        Searcher srch = new Searcher();
         String path; // write down path to your input file here
         try {
             File file = new File(path);
             stream = new FileInputStream(file);
-            int result = srch.search(ss, stream);
+            int result = Searcher.search(ss, stream);
             System.out.println(result);
         } finally {
             stream.close(); // after thinking it over, decided to let the user close his own InputStream himself :p

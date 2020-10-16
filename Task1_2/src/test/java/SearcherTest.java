@@ -1,10 +1,8 @@
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.File;
-import java.io.FileOutputStream;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 
@@ -15,17 +13,22 @@ public class SearcherTest extends TestCase {
     public void test1() throws IOException
     {
         String subs = "ra";
-        String path ;//write down path to your input file here
+        String path;//write down path to your input file here
+        FileInputStream stream = null;
         try{
             FileWriter fw = new FileWriter(path);
             fw.write("abra kadabda");
             fw.close();
-            int result = Searcher.search(subs, path);
+            File file = new File(path);
+            stream = new FileInputStream(file);
+            int result = Searcher.search(subs, stream);
             Assert.assertEquals(2, result);
         }
         catch (IOException e)
         {
             System.out.println(e.getMessage());
+        } finally {
+            stream.close();
         }
 
     }
@@ -36,6 +39,7 @@ public class SearcherTest extends TestCase {
     {
         String subs = "a";
         String path ; //write down path to your input file here
+        FileInputStream stream = null;
         int chars = 1024;
         try{
             FileWriter fw = new FileWriter(path);
@@ -48,13 +52,17 @@ public class SearcherTest extends TestCase {
                     fw.append("a");
             }
             fw.close();
-            int result = Searcher.search(subs, path);
+            File file = new File(path);
+            stream = new FileInputStream(file);
+            int result = Searcher.search(subs, stream);
             Assert.assertEquals(999, result);
 
         }
         catch (IOException e)
         {
             System.out.println(e.getMessage());
+        } finally {
+            stream.close();
         }
     }
     //really large test
@@ -70,6 +78,7 @@ public class SearcherTest extends TestCase {
 
         File file = new File(path);
         FileOutputStream stream = null;
+        FileInputStream stream2 = null;
         try{
             stream = new FileOutputStream(file);
             for (int i = 0; i< chars; i++ )
@@ -80,7 +89,8 @@ public class SearcherTest extends TestCase {
                     stream.write("a".getBytes(StandardCharsets.UTF_8));
 
             }
-            int result = Searcher.search(subs, path);
+            stream2 = new FileInputStream(file);
+            int result = Searcher.search(subs, stream2);
             Assert.assertEquals(999099, result);//268430456
 
         }
@@ -91,6 +101,7 @@ public class SearcherTest extends TestCase {
         finally {
             if (stream != null) {
                 stream.close();
+                stream2.close();
             }
         }
     }
