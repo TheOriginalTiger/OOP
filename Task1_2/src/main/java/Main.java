@@ -119,7 +119,7 @@ public class Main {
         FileInputStream stream = null;
         String ss = "l";//aba
         Searcher srch = new Searcher();
-        String path = "C:\\Users\\vvpvo\\Java Projects\\OOP\\Task1_2\\src\\main\\java\\input.txt"; // write down path to your input file here
+        String path; // write down path to your input file here
         try {
             File file = new File(path);
             stream = new FileInputStream(file);
