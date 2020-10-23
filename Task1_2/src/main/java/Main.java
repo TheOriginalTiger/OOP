@@ -2,7 +2,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
-import java.nio.charset.StandardCharsets;
 import java.io.FileNotFoundException;
 
 class Searcher
@@ -73,43 +72,38 @@ class Searcher
     {
         int result = -1 ;
         String str;
-        try {
-            int len = subString.length();
 
-            if (len == 0)
-                return result;
-
-            byte[] buffer = new byte[len * 2];
-
-            if (stream.read(buffer, 0, len * 2) == -1 )
-            {
-                return -1;
-            }
-            //these 2 are for z-func calculation. It's not wise to allocate them every time we calc it, as the
-            // buff and substring lengths are constant
-            char[] finalArray = new char[subString.length() + buffer.length + 2 ];
-            int[] z = new int[subString.length() + buffer.length + 2 ];
-            result = searchInByteArray(buffer, subString, finalArray, z);
-
-            if (result != -1)
-                return result;
-
-            int offset = len;
-            System.arraycopy(buffer, len, buffer, 0, len);
-            while ( stream.read(buffer, len, len) != -1)
-            {
-                result = searchInByteArray(buffer, subString, finalArray, z);
-                if (result != -1)
-                    return result + offset;
-                System.arraycopy(buffer, len, buffer, 0, len);
-                offset += len;
-            }
+        int len = subString.length();
+        if (len == 0)
             return result;
-        } catch (FileNotFoundException e)
+
+        byte[] buffer = new byte[len * 2];
+
+        if (stream.read(buffer, 0, len * 2) == -1 )
         {
-            System.out.println(e.getMessage());
-            return result;
+            return -1;
         }
+        
+        //these 2 are for z-func calculation. It's not wise to allocate them every time we calc it, as the
+        // buff and substring lengths are constant
+        char[] finalArray = new char[subString.length() + buffer.length + 2 ];
+        int[] z = new int[subString.length() + buffer.length + 2 ];
+        result = searchInByteArray(buffer, subString, finalArray, z);
+
+        if (result != -1)
+            return result;
+        int offset = len;
+
+        System.arraycopy(buffer, len, buffer, 0, len);
+        while ( stream.read(buffer, len, len) != -1)
+        {
+            result = searchInByteArray(buffer, subString, finalArray, z);
+            if (result != -1)
+                return result + offset;
+            System.arraycopy(buffer, len, buffer, 0, len);
+            offset += len;
+        }
+        return result;
 
     }
 }
@@ -118,7 +112,9 @@ public class Main {
     public static void main(String[] args) throws IOException, FileNotFoundException {
         FileInputStream stream = null;
         String ss = "l";//aba
-        String path; // write down path to your input file here
+        String path =  System.getProperty("user.dir").concat("\\src\\input.txt");; // write down path to your input file here
+        System.out.println("the dir is");
+        System.out.println(path);
         try {
             File file = new File(path);
             stream = new FileInputStream(file);
