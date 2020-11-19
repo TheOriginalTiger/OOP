@@ -1,17 +1,20 @@
+import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class PriorityQueue <T> {
+public class PriorityQueue <T> implements Iterable <T>{
     private int keys[];
     private T values[];
     private int lastInd = 0;
+    private int cap;
 
     @SuppressWarnings("unchecked")
     public PriorityQueue(int sizeOfQueue) {
         keys = new int[sizeOfQueue];
         values = (T[]) new Object[sizeOfQueue];
+        cap = sizeOfQueue;
     }
 
     private void swap(int i, int j) {
@@ -57,20 +60,31 @@ public class PriorityQueue <T> {
         }
 
     }
+    @SuppressWarnings("unchecked")
+    private void realloc()
+    {
+        int[] newKeys = new int[cap * 2];
+        T[] newValues = (T[]) new Object[cap * 2];
+        System.arraycopy(keys,0,newKeys,0, lastInd);
+        System.arraycopy(values,0,newValues,0, lastInd);
+        keys = newKeys;
+        values = newValues;
+        cap *= 2;
+    }
 
     /**
      * method of the keys to add another elem to keys.
      * @param elem
      */
     public void insert(Pair <Integer,T> elem) {
+        if (lastInd == cap)
+        {
+            realloc();
+        }
         keys[lastInd] = elem.getFirst();
         values[lastInd] = elem.getSecond();
         siftUp(lastInd);
         lastInd += 1;
-    }
-    public int getCapacity()
-    {
-        return lastInd;
     }
 
     /**
@@ -85,11 +99,16 @@ public class PriorityQueue <T> {
         siftDown(0);
         return res;
     }
-    Stream<T> stream(){
+
+    /**
+     * you know the drill. its a stream
+     * @return stream (Integer, T)
+     */
+    public Stream <Pair <Integer,T>> stream(){
         return StreamSupport.stream(new PriorityQueueSpliterator(), false);
     }
 
-    public class PriorityQueueSpliterator implements Spliterator <T> {
+    private class PriorityQueueSpliterator implements Spliterator <Pair <Integer,T>> {
         private int currPos;
         private int lastPos;
         public PriorityQueueSpliterator()
@@ -103,20 +122,20 @@ public class PriorityQueue <T> {
             lastPos = end;
         }
         @Override
-        public boolean tryAdvance(Consumer<? super T >func)
+        public boolean tryAdvance(Consumer<? super Pair <Integer,T> > func)
         {
             if (currPos <= lastPos)
             {
-
+                Pair <Integer, T> res = new Pair<>(keys[0],values[0]);
                 currPos++;
-                func.accept(values[currPos]); //really hope that you won't need to work with keys :P
+                func.accept(res);
                 return true;
             }
             return false;
         }
 
         @Override
-        public Spliterator<T> trySplit() {
+        public Spliterator <Pair<Integer,T>> trySplit() {
             int sep = (currPos - lastPos)/2;
             if (sep < 1 )
                 return null;
@@ -138,4 +157,30 @@ public class PriorityQueue <T> {
 
     }
 
+    private class Iter<T> implements Iterator <T> {
+
+        private int id = 0;
+        public boolean hasNext() {
+            if (id < lastInd)
+                return true;
+            else
+                return false;
+        }
+
+        @SuppressWarnings("unchecked")
+        public T next()
+        {
+            return (T) values[id++];
+        }
+        public void remove()
+        {
+            throw new UnsupportedOperationException("remove is not supported for queue");
+        }
+    }
+
+
+    public Iterator<T> iterator() {
+
+        return new Iter<T>();
+    }
 }

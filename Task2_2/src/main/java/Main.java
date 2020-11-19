@@ -2,7 +2,7 @@ public class Main {
     @SuppressWarnings("unchecked")
     public static void main(String agrs[])
     {
-        PriorityQueue <String> q = new PriorityQueue<>(10);
+        PriorityQueue <String> q = new PriorityQueue<>(1);
         q.insert(new Pair<Integer, String>(10, "Rofler"));
         q.insert(new Pair<Integer, String>(19, "Rofle"));
         q.insert(new Pair<Integer, String>(20, "Rofl"));
