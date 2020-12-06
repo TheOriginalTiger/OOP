@@ -1,5 +1,7 @@
 import org.jetbrains.annotations.NotNull;
 
+import static java.lang.Math.abs;
+
 enum Day{
     MONDAY,
     TUESDAY,
@@ -11,7 +13,7 @@ enum Day{
     NOTaDAY
 }
 
-public class GrigorianDate {
+public class GregorianDate {
 
     private int days;
     private int[] humanDate;
@@ -48,7 +50,7 @@ public class GrigorianDate {
         }
     }
 
-    public int convertFromArrayToDays(int[] date)
+    private int convertFromArrayToDays(int[] date)
     {
         int d = 0 ;
         for(int i = date[2] - 1; i > 0; i--)
@@ -84,7 +86,7 @@ public class GrigorianDate {
         }
     }
 
-    public int[] convertFromDaysToArray(int days)
+    private int[] convertFromDaysToArray(int days)
     {
         int years = 1;
         int months = 1;
@@ -112,15 +114,31 @@ public class GrigorianDate {
 
     }
 
-    public GrigorianDate(@NotNull int[] date)
-    {
-        if (date[0] < 0 || date[1] > 12 || monthLong(date[1], date[2]) < date[0])
+    /**
+     * constructs a date in gregorian calendar from int array
+     * @param date must be [days, months, years]
+     * if the array is different will throw IllegalArgumentException
+     */
+    public GregorianDate(@NotNull int[] date) {
+        if (date.length != 3 || date[0] < 0 || date[1] > 12 || monthLong(date[1], date[2]) < date[0] )
+        {
             throw new IllegalArgumentException("wrong date params");
+        }
         days = convertFromArrayToDays(date);
         humanDate = date.clone();
     }
-    public GrigorianDate(int days)
+
+    /**
+     * construct a date in gregorian calendar from total number of days
+     * since the start of counting
+     * @param days number of days
+     */
+    public GregorianDate(int days)
     {
+        if (days < 0)
+        {
+            throw new IllegalArgumentException("wrong days params");
+        }
         this.days = days;
         humanDate = convertFromDaysToArray(days);
     }
@@ -144,12 +162,26 @@ public class GrigorianDate {
     {
         return getDayOfTheWeek(days);
     }
+
+    /**
+     * adds 'days' number of days to current date
+     * @param days number of days to add
+     */
     public void addDays(int days)
     {
         this.days += days;
         humanDate = convertFromDaysToArray(this.days);
     }
 
+    /**
+     * adds 'months' number of months to the current date.
+     * As it is not quite certain how ho add a month to the date
+     * the function actually converts all months to days,
+     * considering amount of days int the current month and incrementing it
+     * and then builds the new date from the number of days
+     * because of this behaviour it doesn't create 31 of the june and stuff like that
+     * @param months number of months to add
+     */
     public void addMonths(int months)
     {
         int days = 0;
@@ -168,6 +200,12 @@ public class GrigorianDate {
         addDays(days);
     }
 
+    /**
+     * adds 'years' number of years to current date
+     * behaves exactly like addMonths func but now it converts
+     * years to number of days in 'em, considering whether the year is Leap
+     * @param years number of years to add
+     */
     public void addYears(int years)
     {
         int days = 0;
@@ -179,22 +217,37 @@ public class GrigorianDate {
         }
         addDays(days);
     }
-    // I dont know why, I dont want to know why,
-    // I dont have to know why, but for some motherfucking reason
-    // I keep having the result of subtracting two dates
-    // higher than I need by exactly one
-    // that's why we have to do this terribleness
-    public GrigorianDate subtractDates(GrigorianDate date)
+
+    /**
+     * chooses the older date from argument and the current one
+     * and subtract lower one from it
+     * its not recommended to use that date in further calculations
+     * as it has zero days and months while its not natural for gregorian calendar
+     * @param date to subtract
+     * @return result of subtraction
+     */
+
+    public GregorianDate subtractDates(GregorianDate date)
     {
-        int days = this.days - date.getDays() ;
+
+        int days = abs(this.days - date.getDays()) ;
+        // I dont know why, I dont want to know why,
+        // I dont have to know why, but for some motherfucking reason
+        // I keep having the result of subtracting two dates
+        // higher than I need by exactly one
+        // that's why we have to do this terribleness
         int[] tmp = convertFromDaysToArray(days);
         tmp[0] -= 1;
         tmp[1] -= 1;
         tmp[2] -= 1;
-        return new GrigorianDate(tmp);
+        return new GregorianDate(tmp);
     }
 
-    public GrigorianDate getClosestFridayThirteen()
+    /**
+     * find the closest 13th friday. ¯\_(ツ)_/¯
+     * @return date of the closest 13th friday
+     */
+    public GregorianDate getClosestFridayThirteen()
     {
         int[] myDate = humanDate.clone();
         int myDays = days;
@@ -210,9 +263,9 @@ public class GrigorianDate {
             {
                 myDate[1]++;
             }
-            GrigorianDate tmp = new GrigorianDate(myDays);
+            GregorianDate tmp = new GregorianDate(myDays);
         }
-        return new GrigorianDate(myDate);
+        return new GregorianDate(myDate);
     }
 
     public int[] getHumanDate()
@@ -225,6 +278,10 @@ public class GrigorianDate {
         return days;
     }
 
+    /**
+     * exists for debug purposes as it is tiresome to
+     * always do that for(...) with date.getHumanDate()[i] shit
+     */
     public void printHumanDate()
     {
         for(int i = 0 ; i < 3; i++)

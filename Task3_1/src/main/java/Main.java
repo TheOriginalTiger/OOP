@@ -2,11 +2,13 @@ public class Main {
 
     public static void main(String args[])
     {
-        int[] d = {14,8,2021};
+        int[] d = {6, 12, 2020};
+        GregorianDate date = new GregorianDate(d);
 
-        GrigorianDate date = new GrigorianDate(d);
-        date.getClosestFridayThirteen().printHumanDate();
-       // System.out.print(date.getDayOfTheWeek());
+        int[] heh = {31,12,2020};
+        GregorianDate newYear = new GregorianDate(heh);
+        newYear = newYear.subtractDates(date);
+
     }
 
 }
