@@ -9,8 +9,20 @@ enum Day{
     THURSDAY,
     FRIDAY,
     SATURDAY,
-    SUNDAY,
-    NOTaDAY
+    SUNDAY;
+    static public Day getDayByNumber(int number)
+    {
+        return switch (number) {
+            case(0) -> Day.SUNDAY;
+            case(1) -> Day.MONDAY;
+            case(2) -> Day.TUESDAY;
+            case(3) -> Day.WEDNESDAY;
+            case(4) -> Day.THURSDAY;
+            case(5) -> Day.FRIDAY;
+            case(6) -> Day.SATURDAY;
+            default -> throw new IllegalArgumentException("number is incorrect");
+        };
+    }
 }
 
 public class GregorianDate {
@@ -143,24 +155,10 @@ public class GregorianDate {
         humanDate = convertFromDaysToArray(days);
     }
 
-    private Day getDayOfTheWeek(int days)
-    {
-       return  switch (days % 7 )
-               {
-                   case(0) -> Day.SUNDAY;
-                   case(1) -> Day.MONDAY;
-                   case(2) -> Day.TUESDAY;
-                   case(3) -> Day.WEDNESDAY;
-                   case(4) -> Day.THURSDAY;
-                   case(5) -> Day.FRIDAY;
-                   case(6) -> Day.SATURDAY;
-                   default -> Day.NOTaDAY;
-               };
-    }
 
     public Day getDayOfTheWeek()
     {
-        return getDayOfTheWeek(days);
+        return Day.getDayByNumber(days % 7);
     }
 
     /**
@@ -251,7 +249,7 @@ public class GregorianDate {
     {
         int[] myDate = humanDate.clone();
         int myDays = days;
-        while(!(myDate[0] == 13 && getDayOfTheWeek(myDays) == Day.FRIDAY) ) {
+        while(!(myDate[0] == 13 && Day.getDayByNumber(myDays % 7) == Day.FRIDAY) ) {
 
             myDays = myDays + (monthLong(myDate[1], myDate[2]) - myDate[0]) + 13;
             myDate[0] = 13;
