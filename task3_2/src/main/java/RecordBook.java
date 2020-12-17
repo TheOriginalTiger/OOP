@@ -27,6 +27,8 @@ public class RecordBook {
      */
     public void evaluate(int mark, String subject, int semester)
     {
+        if (mark < 0 || mark > 5)
+            throw new IllegalArgumentException("mark must be from 1 to 5");
         //мне физически плохо от этого обращения
         marks[semester][course.getSubjects().get(semester).indexOf(subject)] = mark;
     }
@@ -37,6 +39,7 @@ public class RecordBook {
      */
     public double averageMark()
     {
+
         int sum = 0 ;
         int amount = 0;
         for(int i = 0 ; i <= student.getCurrentSemester(); i++)
@@ -47,6 +50,8 @@ public class RecordBook {
                 amount++;
             }
         }
+        if (sum == 0 )
+            return 0;
         return (double) sum / amount;
     }
 
