@@ -41,7 +41,8 @@
 # .idea/modules
 # *.iml
 # *.ipr
-
+*.bat
+gradlew
 # CMake
 cmake-build-*/
 
